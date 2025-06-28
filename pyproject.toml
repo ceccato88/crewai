@@ -5,9 +5,20 @@ description = ""
 authors = ["Your Name <you@example.com>"]
 requires-python = ">=3.12"
 dependencies = [
+    "black>=25.1.0",
     "crewai[tools]>=0.134.0",
     "pillow>=11.2.1",
+    "pyright>=1.1.402",
     "python-dotenv>=1.1.1",
+    "ruff>=0.12.1",
     "upstash-vector>=0.8.0",
     "voyageai>=0.3.2",
 ]
+
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+
+[tool.ruff]
+line-length = 100
+extend-select = ["I"] 

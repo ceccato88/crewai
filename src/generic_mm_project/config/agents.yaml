@@ -1,3 +1,4 @@
+# src/generic_mm_project/config/agents.yaml
 text_researcher:
   role: "Pesquisador de Texto"
   goal: "Encontrar passagens relevantes e resumi-las"

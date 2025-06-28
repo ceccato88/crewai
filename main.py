@@ -1,10 +1,9 @@
-
 #!/usr/bin/env python
-import sys
 import os
+import sys
 
 # Add src to Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
 from generic_mm_project.main import run
 

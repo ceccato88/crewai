@@ -1,20 +1,24 @@
-import yaml
+# src/generic_mm_project/crew.py
 import pathlib
 from typing import List
-from crewai import Agent, Task, Crew, Process
-from crewai.project import CrewBase, agent, task, crew
+
+import yaml
+from crewai import Agent, Crew, Process, Task
+from crewai.project import CrewBase, agent, crew, task
+
 from .upstash_vector_tool import UpstashVectorSearchTool
 
 ROOT = pathlib.Path(__file__).parent
-AGENTS = yaml.safe_load((ROOT/"config/agents.yaml").read_text())
-TASKS  = yaml.safe_load((ROOT/"config/tasks.yaml").read_text())
+AGENTS = yaml.safe_load((ROOT / "config/agents.yaml").read_text())
+TASKS = yaml.safe_load((ROOT / "config/tasks.yaml").read_text())
 
 search_tool = UpstashVectorSearchTool()
+
 
 @CrewBase
 class GenericMMCrew:
     agents: List[Agent]
-    tasks:  List[Task]
+    tasks: List[Task]
 
     @agent
     def text_researcher(self):
@@ -34,9 +38,4 @@ class GenericMMCrew:
 
     @crew
     def crew(self):
-        return Crew(
-            agents=self.agents,
-            tasks=self.tasks,
-            process=Process.sequential,
-            verbose=True
-        )
+        return Crew(agents=self.agents, tasks=self.tasks, process=Process.sequential, verbose=True)

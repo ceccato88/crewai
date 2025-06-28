@@ -1,9 +1,9 @@
 entrypoint = "main.py"
-modules = ["python-3.11", "python-3.12"]
+modules = ["nodejs-20", "python-3.11", "python-3.12", "nodejs-18"]
 
 [nix]
 channel = "stable-24_05"
-packages = ["freetype", "lcms2", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "openjpeg", "tcl", "tk", "zlib"]
+packages = ["freetype", "lcms2", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "openjpeg", "tcl", "tk", "zlib", "tree"]
 
 [unitTest]
 language = "python3"

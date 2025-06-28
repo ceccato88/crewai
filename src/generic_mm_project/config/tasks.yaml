@@ -1,3 +1,4 @@
+# src/generic_mm_project/config/tasks.yaml
 search_task:
   description: |
     Use a ferramenta de busca para responder "{query}".
