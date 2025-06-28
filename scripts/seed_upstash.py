@@ -4,7 +4,10 @@ import uuid
 
 from upstash_vector import Index
 
-from src.generic_mm_project.voyage_embed import embed_doc
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+from services.embeddings.voyage_embed import embed_doc
 
 index = Index.from_env()
 

@@ -2,11 +2,11 @@
 import os
 from typing import Any, Dict, List
 
-from crewai_tools import BaseTool
+from crewai.tools import BaseTool
 from pydantic import BaseModel, Field
 from upstash_vector import Index
 
-from .voyage_embed import embed_query
+from ..embeddings.voyage_embed import embed_query
 
 
 class ArgsSchema(BaseModel):
@@ -21,15 +21,15 @@ class UpstashVectorSearchTool(BaseTool):
 
     def __init__(self, namespace: str | None = None):
         super().__init__()
-        self.index = Index(
+        self._index = Index(
             url=os.getenv("UPSTASH_VECTOR_REST_URL"), token=os.getenv("UPSTASH_VECTOR_REST_TOKEN")
         )
-        self.namespace = namespace or None
+        self._namespace = namespace or None
 
     def _run(self, query: str, top_k: int = 3) -> List[Dict]:
         vec = embed_query(query)
-        res = self.index.query(
-            vector=vec, top_k=top_k, include_metadata=True, namespace=self.namespace
+        res = self._index.query(
+            vector=vec, top_k=top_k, include_metadata=True, namespace=self._namespace
         )
         # converte p/ formato similar ao Qdrant
         return [

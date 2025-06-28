@@ -1,0 +1,83 @@
+# src/generic_mm_project/config/tasks.yaml
+text_analysis_task:
+  description: |
+    Use a ferramenta de busca para analisar metadados de texto markdown relacionados à query "{query}".
+    Analise o conteúdo textual encontrado e extraia insights relevantes dos metadados.
+    Para cada resultado relevante (máx 3), crie um objeto:
+      {
+        "file": metadata.file,
+        "text_summary": resumo detalhado do conteúdo textual em 2-3 frases,
+        "text_insights": insights principais extraídos do texto,
+        "image_reference": metadata.image_path
+      }
+    Retorne JSON estruturado:
+      { 
+        "text_analysis": [...],
+        "referenced_images": ["img1", "img2", ...],
+        "key_findings": "resumo dos principais achados textuais"
+      }
+  expected_output: "JSON estruturado com análise textual"
+  agent: text_researcher
+
+visual_analysis_task:
+  description: |
+    IMPORTANTE: Você DEVE usar o AddImageTool para carregar e analisar cada imagem visualmente.
+    
+    Analise as seguintes imagens de teste usando suas capacidades de visão:
+    1. /workspaces/crewai/test_images/diagram1.png
+    2. /workspaces/crewai/test_images/diagram2.png  
+    3. /workspaces/crewai/test_images/diagram3.png
+    
+    Para cada imagem:
+    1. Use o AddImageTool para carregar a imagem
+    2. EXAMINE VISUALMENTE o conteúdo real da imagem
+    3. Descreva EXATAMENTE o que você vê na imagem
+    4. Analise elementos visuais, cores, formas, texto, diagramas
+    5. Extraia insights baseados no conteúdo visual real
+    
+    NÃO especule sobre o conteúdo - apenas descreva o que você realmente vê após carregar a imagem.
+    
+    Formato esperado:
+      {
+        "visual_analysis": [
+          {
+            "image": "caminho_da_imagem",
+            "visual_description": "descrição detalhada do que realmente vejo na imagem",
+            "actual_content": "elementos específicos observados visualmente",
+            "colors_and_shapes": "cores, formas e estruturas identificadas",
+            "insights": "insights baseados no conteúdo visual real"
+          }
+        ],
+        "visual_insights": "resumo baseado na análise visual real das imagens"
+      }
+  expected_output: "JSON com análise visual baseada no conteúdo real das imagens carregadas"
+  agent: image_analyst
+
+coordination_task:
+  description: |
+    Integre as análises textuais e visuais para criar uma resposta final coordenada.
+    Combine os insights de ambas as análises para responder à query original "{query}".
+    
+    Crie um relatório final que:
+    1. Sintetize os principais achados textuais
+    2. Incorpore os insights visuais relevantes
+    3. Identifique correlações entre texto e imagens
+    4. Forneça uma resposta abrangente e coordenada
+    
+    Formato do relatório final:
+    ## Análise Integrada
+    
+    ### Insights Textuais
+    [Resumo dos principais achados do texto]
+    
+    ### Insights Visuais  
+    [Resumo dos principais achados das imagens]
+    
+    ### Síntese Multimodal
+    [Correlações e insights integrados]
+    
+    ### Resposta Final
+    [Resposta coordenada à query original]
+  expected_output: "Relatório markdown integrado"
+  agent: coordinator
+  output_file: output/multimodal_report.md
