@@ -3,5 +3,11 @@ name = "python-template"
 version = "0.1.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
-requires-python = ">=3.11"
-dependencies = []
+requires-python = ">=3.12"
+dependencies = [
+    "crewai[tools]>=0.134.0",
+    "pillow>=11.2.1",
+    "python-dotenv>=1.1.1",
+    "upstash-vector>=0.8.0",
+    "voyageai>=0.3.2",
+]

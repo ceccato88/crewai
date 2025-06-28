@@ -1,0 +1,14 @@
+text_researcher:
+  role: "Pesquisador de Texto"
+  goal: "Encontrar passagens relevantes e resumi-las"
+  backstory: "Especialista em síntese rápida."
+  llm: openai/gpt-4o
+  verbose: true
+
+image_analyst:
+  role: "Analista Visual"
+  goal: "Descrever imagens associadas"
+  backstory: "Perito em inspeção visual."
+  llm: openai/gpt-4o
+  multimodal: true
+  verbose: true

@@ -1,0 +1,25 @@
+search_task:
+  description: |
+    Use a ferramenta de busca para responder "{query}".
+    Para cada hit (máx 3) gere objeto:
+      {
+        "file": metadata.file,
+        "summary": resumo de context em até 2 frases,
+        "image": metadata.image_path
+      }
+    Devolva JSON:
+      { "pages": [...], "images": ["img1", "img2", ...] }
+  expected_output: "JSON estruturado"
+  agent: text_researcher
+
+visual_task:
+  description: |
+    Recebe o JSON acima.  
+    ## Insight textual  
+    Liste os summaries.  
+    ## Análise visual  
+    Para cada 'image', abra (AddImageTool) e descreva qualidade, conteúdo, observações.
+  expected_output: "Markdown com duas seções"
+  agent: image_analyst
+  context: [search_task]
+  output_file: output/report.md
