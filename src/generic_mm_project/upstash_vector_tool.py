@@ -16,10 +16,15 @@ class UpstashVectorSearchTool(BaseTool):
 
     def __init__(self, namespace: str = ""):
         super().__init__()
-        self.index = Index(
-            url=os.getenv("UPSTASH_VECTOR_REST_URL"),
-            token=os.getenv("UPSTASH_VECTOR_REST_TOKEN")
-        )
+        url = os.getenv("UPSTASH_VECTOR_REST_URL")
+        token = os.getenv("UPSTASH_VECTOR_REST_TOKEN")
+        
+        if url is None:
+            raise ValueError("UPSTASH_VECTOR_REST_URL environment variable not set")
+        if token is None:
+            raise ValueError("UPSTASH_VECTOR_REST_TOKEN environment variable not set")
+            
+        self.index = Index(url=url, token=token)
         self.namespace = namespace or None
 
     def _run(self, query: str, top_k: int = 3) -> List[Dict]:
