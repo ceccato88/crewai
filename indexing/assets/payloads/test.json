@@ -1,0 +1,14 @@
+{
+  "inputs": [
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "Este é um teste de texto simples para verificar se o sistema está funcionando corretamente."
+        }
+      ]
+    }
+  ],
+  "model": "voyage-multimodal-3",
+  "truncation": false
+}
