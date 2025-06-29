@@ -1,16 +1,16 @@
 # src/generic_mm_project/config/tasks.yaml
 text_analysis_task:
   description: |
-    Use a ferramenta de busca para analisar metadados de texto markdown relacionados à query "{query}".
-    Analise o conteúdo textual encontrado e extraia insights relevantes dos metadados.
-    Para cada resultado relevante (máx 3), crie um objeto:
+    DELEGUE para o Pesquisador de Texto: Use a ferramenta UpstashVectorSearchTool para analisar metadados de texto markdown relacionados à query "{query}".
+    O agente deve analisar o conteúdo textual encontrado e extrair insights relevantes dos metadados.
+    Para cada resultado relevante, criar um objeto:
       {
         "file": metadata.file,
         "text_summary": resumo detalhado do conteúdo textual em 2-3 frases,
         "text_insights": insights principais extraídos do texto,
         "image_reference": metadata.image_path
       }
-    Retorne JSON estruturado:
+    Retornar JSON estruturado:
       { 
         "text_analysis": [...],
         "referenced_images": ["img1", "img2", ...],
@@ -21,21 +21,16 @@ text_analysis_task:
 
 visual_analysis_task:
   description: |
-    IMPORTANTE: Você DEVE usar o AddImageTool para carregar e analisar cada imagem visualmente.
+    DELEGUE para o Analista Visual: Use a ferramenta AddImageTool para carregar e analisar visualmente cada imagem referenciada das análises textuais.
     
-    Analise as seguintes imagens de teste usando suas capacidades de visão:
-    1. /workspaces/crewai/test_images/diagram1.png
-    2. /workspaces/crewai/test_images/diagram2.png  
-    3. /workspaces/crewai/test_images/diagram3.png
+    Para cada imagem nos caminhos "/workspaces/crewai/pdf_images/":
+    1. Use AddImageTool para carregar a imagem com o caminho completo
+    2. EXAMINE VISUALMENTE o conteúdo real da imagem carregada
+    3. Descreva EXATAMENTE o que vê: texto, diagramas, gráficos, tabelas
+    4. Analise elementos visuais específicos: cores, formas, estruturas, layout
+    5. Extraia insights baseados no conteúdo visual observado
     
-    Para cada imagem:
-    1. Use o AddImageTool para carregar a imagem
-    2. EXAMINE VISUALMENTE o conteúdo real da imagem
-    3. Descreva EXATAMENTE o que você vê na imagem
-    4. Analise elementos visuais, cores, formas, texto, diagramas
-    5. Extraia insights baseados no conteúdo visual real
-    
-    NÃO especule sobre o conteúdo - apenas descreva o que você realmente vê após carregar a imagem.
+    IMPORTANTE: Use apenas o que realmente vê na imagem após carregá-la.
     
     Formato esperado:
       {

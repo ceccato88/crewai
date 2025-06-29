@@ -1,66 +1,67 @@
 # src/generic_mm_project/crew.py
-import os
-import pathlib
 from typing import List
-
-import yaml
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
-
 from services.vector.upstash_vector_tool import UpstashVectorSearchTool
 
-ROOT = pathlib.Path(__file__).parent
-AGENTS = yaml.safe_load((ROOT / "config/agents.yaml").read_text())
-TASKS = yaml.safe_load((ROOT / "config/tasks.yaml").read_text())
-
-search_tool = UpstashVectorSearchTool()
-
-
 @CrewBase
-class GenericMMCrew:
+class MultimodalAnalysisCrew:
+    """Crew for multimodal document analysis combining text and visual insights"""
+    
     agents: List[Agent]
     tasks: List[Task]
+    
+    agents_config = 'config/agents.yaml'
+    tasks_config = 'config/tasks.yaml'
 
     @agent
-    def text_researcher(self):
-        agent_config = AGENTS["text_researcher"].copy()
-        agent_config["tools"] = [search_tool]
-        return Agent(**agent_config)
+    def text_researcher(self) -> Agent:
+        return Agent(
+            config=self.agents_config['text_researcher'],
+            tools=[UpstashVectorSearchTool()],
+            verbose=True
+        )
 
     @agent
-    def image_analyst(self):
-        return Agent(**AGENTS["image_analyst"])
+    def image_analyst(self) -> Agent:
+        return Agent(
+            config=self.agents_config['image_analyst'],
+            tools=[UpstashVectorSearchTool()],
+            verbose=True
+        )
 
     @agent
-    def coordinator(self):
-        return Agent(**AGENTS["coordinator"])
+    def coordinator(self) -> Agent:
+        return Agent(
+            config=self.agents_config['coordinator'],
+            verbose=True
+        )
 
     @task
-    def text_analysis_task(self):
-        task_config = TASKS["text_analysis_task"].copy()
-        task_config["agent"] = self.text_researcher()
-        return Task(**task_config)
+    def text_analysis_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['text_analysis_task']
+        )
 
     @task
-    def visual_analysis_task(self):
-        task_config = TASKS["visual_analysis_task"].copy()
-        task_config["agent"] = self.image_analyst()
-        return Task(**task_config)
+    def visual_analysis_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['visual_analysis_task']
+        )
 
     @task
-    def coordination_task(self):
-        task_config = TASKS["coordination_task"].copy()
-        task_config["agent"] = self.coordinator()
-        task_config["context"] = [self.text_analysis_task(), self.visual_analysis_task()]
-        task_config["output_file"] = "output/multimodal_report.md"
-        return Task(**task_config)
+    def coordination_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['coordination_task'],
+            context=[self.text_analysis_task(), self.visual_analysis_task()],
+            output_file="output/multimodal_report.md"
+        )
 
     @crew
-    def crew(self):
+    def crew(self) -> Crew:
         return Crew(
-            agents=self.agents, 
-            tasks=self.tasks, 
-            process=Process.hierarchical,
-            manager_llm="openai/gpt-4o",
+            agents=[self.text_researcher(), self.image_analyst(), self.coordinator()],
+            tasks=self.tasks,
+            process=Process.sequential,
             verbose=True
         )

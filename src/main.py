@@ -10,7 +10,7 @@ load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from crew import GenericMMCrew
+from crew import MultimodalAnalysisCrew
 
 os.makedirs("output", exist_ok=True)
 
@@ -19,15 +19,64 @@ async def run_async(question: str):
     """
     Executa a crew assincronamente com a pergunta fornecida.
     """
-    result = await GenericMMCrew().crew().kickoff_async(inputs={"query": question})
+    result = await MultimodalAnalysisCrew().crew().kickoff_async(inputs={"query": question})
     return result
+
+async def run_parallel_agents(question: str):
+    """
+    Executa análise textual e visual em paralelo, depois coordena.
+    """
+    crew_instance = MultimodalAnalysisCrew()
+    
+    # Cria crews separadas para execução paralela
+    from crewai import Crew, Process
+    
+    # Crew só para análise textual
+    text_crew = Crew(
+        agents=[crew_instance.text_researcher()],
+        tasks=[crew_instance.text_analysis_task()],
+        process=Process.sequential,
+        verbose=True
+    )
+    
+    # Crew só para análise visual  
+    visual_crew = Crew(
+        agents=[crew_instance.image_analyst()],
+        tasks=[crew_instance.visual_analysis_task()],
+        process=Process.sequential,
+        verbose=True
+    )
+    
+    # Executa as duas crews em paralelo
+    print("🚀 Executando análise textual e visual em paralelo...")
+    text_result, visual_result = await asyncio.gather(
+        text_crew.kickoff_async(inputs={"query": question}),
+        visual_crew.kickoff_async(inputs={"query": question})
+    )
+    
+    # Agora executa a coordenação com os resultados
+    coordination_crew = Crew(
+        agents=[crew_instance.coordinator()],
+        tasks=[crew_instance.coordination_task()],
+        process=Process.sequential,
+        verbose=True
+    )
+    
+    print("🔄 Integrando resultados...")
+    final_result = await coordination_crew.kickoff_async(inputs={
+        "query": question,
+        "text_analysis": text_result.raw,
+        "visual_analysis": visual_result.raw
+    })
+    
+    return final_result
 
 
 def run(question: str):
     """
     Executa a crew sincronamente com a pergunta fornecida.
     """
-    result = GenericMMCrew().crew().kickoff(inputs={"query": question})
+    result = MultimodalAnalysisCrew().crew().kickoff(inputs={"query": question})
     print("\n=== RESPOSTA FINAL ===\n")
     print(result.raw)
     print("\nRelatório em: output/multimodal_report.md")
@@ -43,7 +92,7 @@ async def run_multiple_queries_async(questions: list):
     
     # Cria corrotinas para execução concorrente
     tasks = [
-        GenericMMCrew().crew().kickoff_async(inputs={"query": question}) 
+        MultimodalAnalysisCrew().crew().kickoff_async(inputs={"query": question}) 
         for question in questions
     ]
     
@@ -91,6 +140,13 @@ if __name__ == "__main__":
     # Verifica se deve executar demo assíncrono
     if "--async-demo" in sys.argv:
         asyncio.run(demo_async_capabilities())
+    elif "--parallel" in sys.argv:
+        async def main():
+            result = await run_parallel_agents(q)
+            print("\n=== RESPOSTA FINAL (PARALELO) ===\n")
+            print(result.raw)
+            print("\nRelatório em: output/multimodal_report.md")
+        asyncio.run(main())
     elif "--async" in sys.argv:
         async def main():
             result = await run_async(q)

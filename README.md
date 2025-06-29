@@ -191,17 +191,17 @@ print('✅ Upstash Token:', 'Configurado' if os.getenv('UPSTASH_VECTOR_REST_TOKE
 
 ```bash
 # Análise simples
-python src/generic_mm_project/main.py "Analise este documento"
+python src/main.py "Analise este documento"
 
 # Com pergunta específica
-python src/generic_mm_project/main.py "Resuma o conteúdo e descreva as imagens"
+python src/main.py "Resuma o conteúdo e descreva as imagens"
 ```
 
 ### Uso Avançado (Assíncrono)
 
 ```bash
 # Execução assíncrona
-python src/generic_mm_project/main.py "Sua pergunta" --async
+python src/main.py "o que é o zep?" --async
 
 # Demo completo das capacidades assíncronas
 python async_demo.py --quick

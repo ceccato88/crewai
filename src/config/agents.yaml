@@ -3,20 +3,23 @@ text_researcher:
   role: "Pesquisador de Texto"
   goal: "Analisar metadata de texto markdown e encontrar informações relevantes"
   backstory: "Especialista em análise de conteúdo textual e metadados markdown."
-  llm: openai/gpt-4o
+  llm: openai/gpt-4.1-mini
   verbose: true
+  allow_delegation: false
 
 image_analyst:
   role: "Analista Visual"
   goal: "Analisar imagens usando capacidades de visão e extrair insights visuais"
   backstory: "Perito em análise visual e interpretação de imagens usando IA."
-  llm: openai/gpt-4o
+  llm: openai/gpt-4.1-mini
   multimodal: true
   verbose: true
+  allow_delegation: false
 
 coordinator:
   role: "Coordenador Multimodal"
   goal: "Integrar análises de texto e imagem para criar resposta final coordenada"
   backstory: "Especialista em síntese multimodal que combina insights textuais e visuais."
-  llm: openai/gpt-4o
+  llm: openai/gpt-4.1-mini
   verbose: true
+  allow_delegation: true
